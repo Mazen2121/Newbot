@@ -1,16 +1,22 @@
 {
-  "name": "zoonattack-bots",
+  "name": "testbot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "discord.js-commando": "^0.10.0",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-binaries": "^4.0.0",
+    "moment": "^2.24.0",
+    "moment-duration-format": "^2.3.2",
+    "opusscript": "0.0.7",
+    "ytdl-core": "^0.29.6"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "^11.5.1",
-    "moment": "^2.24.0",
-    "moment-duration-format": "^2.3.2"
-  }
+  "license": "ISC"
 }
