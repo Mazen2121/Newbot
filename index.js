@@ -2,12 +2,23 @@ const Discord = require('discord.js')
 const client = new Discord.Client();
 const ytdl = require('ytdl-core')
 const moment = require('moment')
-require('moment-duration-format')
+require('moment-duration-format')`
 client.login(process.env.TOKEN)
-
+client.on('message', message =>
+{
+    if(message.content.toLowerCase() === "rabo tk moron")
+    {
+        
+        message.member.voiceChannel.join()
+        ;message.channel.send("Rabo tk is a mentally disabled guy", {
+            tts: true
+        });
+    }
+})
 // music commands
 const queue = new Map();
 client.on('message', async message => {
+    let user = message.mentions.users.first()
 	if (message.author.bot) return;
 	const serverQueue = queue.get(message.guild.id);
 
@@ -127,7 +138,7 @@ client.on('message', m =>{
     }
 if(m.content.toLowerCase().startsWith("!userinfo"))
     {
-     let member = m.mentions.members.first() || m.member,
+     let member = m.mentions.members.first()
      user = member.user;
 
       const embed = new Discord.RichEmbed()
@@ -286,6 +297,38 @@ function Coinflip()
         
         message.channel.send(`I'ts ` + Coinflip() + "!")
     }
+})
+var judgelist = [];
+
+client.on('message', message => 
+{    if(message.content.toLowerCase().startsWith('!add'))
+    {
+        let args = message.content.split(" ").splice(1)
+
+        if(judgelist.indexOf(args.join(" ")) > -1) 
+        {
+
+         message.reply('That participant is already in the judge list!')
+
+        }else {
+            judgelist.push(args.slice())
+            message.author.send(`Successfully added ${args.join(" ")} To the judge list`)
+            console.log(judgelist)
+        } 
+    }
+    if(message.content.toLowerCase() === "showlist")
+   {
+        let list1 = new Discord.RichEmbed()
+        let msg1 = '';
+        for (let i = 0; i < judgelist.length; i++)
+        {
+         msg1 += i + ' ' + judgelist[i].join(" ") + ' ' + `\n`;
+        }
+         list1.addField(`Participants`, ` **:** ${msg1}`)
+         .setColor(`RANDOM`)
+        if(judgelist.length < 0) return  message.reply("Queue is empty!")
+         message.channel.send(list1)
+   }
 })
 //end of part command
 // timer command
