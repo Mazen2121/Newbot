@@ -3,7 +3,6 @@ const client = new Discord.Client();
 const ytdl = require('ytdl-core')
 const moment = require('moment')
 require('moment-duration-format')`
-client.login(process.env.TOKEN)
 client.on('message', message =>
 {
     if(message.content.toLowerCase() === "rabo tk moron")
@@ -532,3 +531,4 @@ client.on('guildMemberAdd', member => {
     member.addRole(role)
 })
 // end of greeting cmd
+client.login(process.env.TOKEN)
