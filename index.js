@@ -2,22 +2,10 @@ const Discord = require('discord.js')
 const client = new Discord.Client();
 const ytdl = require('ytdl-core')
 const moment = require('moment')
-require('moment-duration-format')`
-client.on('message', message =>
-{
-    if(message.content.toLowerCase() === "rabo tk moron")
-    {
-        
-        message.member.voiceChannel.join()
-        ;message.channel.send("Rabo tk is a mentally disabled guy", {
-            tts: true
-        });
-    }
-})
+require('moment-duration-format')
 // music commands
 const queue = new Map();
 client.on('message', async message => {
-    let user = message.mentions.users.first()
 	if (message.author.bot) return;
 	const serverQueue = queue.get(message.guild.id);
 
