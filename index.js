@@ -3,6 +3,7 @@ const client = new Discord.Client();
 const ytdl = require('ytdl-core')
 const moment = require('moment')
 require('moment-duration-format')
+client.login(process.env.TOKEN)
 // music commands
 const queue = new Map();
 client.on('message', async message => {
@@ -12,10 +13,12 @@ client.on('message', async message => {
 	if (message.content.startsWith(`!play`)) {
 		execute(message, serverQueue);
 		return;
-	} else if (message.content.startsWith(`!skip`)) {
+    } 
+     if (message.content.startsWith(`!skip`)) {
 		skip(message, serverQueue);
 		return;
-	} else if (message.content.startsWith(`!stop`)) {
+    } 
+    if (message.content.startsWith(`!stop`)) {
 		stop(message, serverQueue);
 		return;
 	}
@@ -66,17 +69,6 @@ async function execute(message, serverQueue) {
 	}
 
 }
-function skip(message, serverQueue) {
-    if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-    if (!serverQueue) return message.channel.send('There is no song that I could skip!');
-    serverQueue.connection.dispatcher.end();
-}
-
-function stop(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	serverQueue.songs = [];
-	serverQueue.connection.dispatcher.end();
-}
 function play(guild, song) {
 	const serverQueue = queue.get(guild.id);
 
@@ -97,6 +89,18 @@ function play(guild, song) {
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 
 }
+function skip(message, serverQueue) {
+    if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
+    if (!serverQueue) return message.channel.send('There is no song that I could skip!');
+    serverQueue.connection.dispatcher.end();
+}
+
+function stop(message, serverQueue) {
+	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
+	serverQueue.songs = [];
+	serverQueue.connection.dispatcher.end();
+}
+
 //end
 // user info | server info
 client.on('message', m =>{
@@ -108,16 +112,16 @@ client.on('message', m =>{
         {
             const embed = new Discord.RichEmbed()
             .setColor(`RANDOM`)
-            .setAuthor(m.author.tag)
+            .setAuthor(m.author.username)
             .setTitle(`Here is your avatar!`)
             .setThumbnail(m.author.displayAvatarURL)
             m.reply(embed)
         }
         else if(user)
         {
-            const embed = new Discord.RichEmbed
+            const embed = new Discord.RichEmbed()
             .setColor(`RANDOM`)
-            .setAuthor(user)
+            .setAuthor(user.tag)
             .setTitle(`Here is ${user.tag}'s Avatar`)
             .setThumbnail(user.displayAvatarURL)
             m.reply(embed)
@@ -125,11 +129,11 @@ client.on('message', m =>{
     }
 if(m.content.toLowerCase().startsWith("!userinfo"))
     {
-     let member = m.mentions.members.first()
-     user = member.user;
+     let member = m.mentions.members.first() || m.member,
+     user = member.user;   
 
       const embed = new Discord.RichEmbed()
-      .setAuthor(user.tag, user.displayAvatarURL)
+      .setAuthor(user.tag,  user.displayAvatarURL)
       .setThumbnail(user.displayAvatarURL)
       .addField(`Username`, user.username)
       .addField(`User id`, user.discriminator)
@@ -210,6 +214,13 @@ if(partstart)
             message.reply("You have been removed from the queue!")
         }
     }
+    if(message.content.toLowerCase() === "!ec")
+    {
+        if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
+        partstart = false;
+
+        message.reply("Queue has been closed")
+    }
     if(message.content.toLowerCase() === "!eo")
     {
         if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Open queue!")
@@ -217,13 +228,6 @@ if(partstart)
         partstart = true;
         message.reply("Queue has been Opened!")
         
-    }
-    if(message.content.toLowerCase() === "!ec")
-    {
-        if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
-        partstart = false;
-
-        message.reply("Queue has been closed")
     }
     if(message.content.toLowerCase() == "!list")
     {
@@ -341,12 +345,12 @@ client.on("message", message => {
                 }     
          }, 1000)   
       }
+      let timer = 60;
       if(message.content.toLowerCase() == "!timer 60")
       {   
        if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
   
           message.reply("Timer set for 60 Seconds..")
-          let timer = 60;
           const clock = setInterval(() => {
             timer--;
             console.log(timer);
@@ -512,11 +516,9 @@ client.on('guildMemberAdd', member => {
     .addField("Support Zoon :d", "Instagram : @zoonattackbbx. Twitter : @AttackZoon. Youtube : ZoonAttack");
 
     let channel = member.guild.systemChannel
-
      channel.send(embed)
     let role = member.guild.roles.find(r=> r.name === '[ ZoonGang ]')
 
     member.addRole(role)
 })
 // end of greeting cmd
-client.login(process.env.TOKEN)
