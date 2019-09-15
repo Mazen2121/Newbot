@@ -205,6 +205,7 @@ if(partstart)
             message.reply("You have been added to the queue!")
         }
     }
+
     if(message.content.toLowerCase() === "!quit")
     {
         if(que.indexOf(message.author.username) === -1) return message.reply("You are not in the queue to quit")
@@ -214,20 +215,23 @@ if(partstart)
             message.reply("You have been removed from the queue!")
         }
     }
-    if(message.content.toLowerCase() === "!ec")
+
+    if(message.content.toLowerCase() == '!' + 'ec')
     {
         if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
-        partstart = false;
-
-        message.reply("Queue has been closed")
+        partstart = false
+        message.reply('Event closed')
     }
-    if(message.content.toLowerCase() === "!eo")
+}
+if(!partstart || partstart)
+{
+
+    if(message.content.toLowerCase() == '!' + 'eo')
     {
-        if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Open queue!")
+        if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
 
         partstart = true;
-        message.reply("Queue has been Opened!")
-        
+        message.reply('Event Opened')
     }
     if(message.content.toLowerCase() == "!list")
     {
@@ -260,6 +264,7 @@ if(partstart)
         message.channel.send(`Removed ${que[0]}`)
         que.shift(que)
     }
+}
 if(message.content.startsWith("!announce"))
 {
     if(!message.member.hasPermission(['ADMINISTRATOR', 'MENTION_EVERYONE'])) return message.reply("You have no permission to do that command!")
@@ -278,7 +283,7 @@ if(message.content.startsWith("!announce"))
     commandchannel.send('!eo')
     .catch(err => message.channel.send(`Error ${err.message}`))
 }
-}
+
 function Coinflip()
 {
     return (Math.floor(Math.random() *2 ) == 0)? "Tails!" : "Heads!";
