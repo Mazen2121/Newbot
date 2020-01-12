@@ -1,107 +1,77 @@
 const Discord = require('discord.js')
 const client = new Discord.Client();
-const ytdl = require('ytdl-core')
 const moment = require('moment')
 require('moment-duration-format')
 client.login(process.env.TOKEN)
-// music commands
-const queue = new Map();
-client.on('message', async message => {
-	if (message.author.bot) return;
-	const serverQueue = queue.get(message.guild.id);
 
-	if (message.content.startsWith(`!play`)) {
-		execute(message, serverQueue);
-		return;
-    } 
-     if (message.content.startsWith(`!skip`)) {
-		skip(message, serverQueue);
-		return;
-    } 
-    if (message.content.startsWith(`!stop`)) {
-		stop(message, serverQueue);
-		return;
-	}
-});
-async function execute(message, serverQueue) {
-	const args = message.content.split(' ');
+//testing stuff
+/*client.on('message', message => 
+{
+  if(message.content.toLowerCase().startswith("!timer"))
+    {   
+    let args = message.content.split(" ").slice(1)
+    
+     if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
 
-	const voiceChannel = message.member.voiceChannel;
-	if (!voiceChannel) return message.channel.send('You need to be in a voice channel to play music!');
-	const permissions = voiceChannel.permissionsFor(message.client.user);
-	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-		return message.channel.send('I need the permissions to join and speak in your voice channel!');
-	}
+        message.reply(`Timer set for ${args.join(" ")} Seconds..`)
+        let timer = args.join(" ");
 
-	const songInfo = await ytdl.getInfo(args[1]);
-	const song = {
-		title: songInfo.title,
-		url: songInfo.video_url,
-	};
-
-	if (!serverQueue) {
-		const queueContruct = {
-			textChannel: message.channel,
-			voiceChannel: voiceChannel,
-			connection: null,
-			songs: [],
-			volume: 5,
-			playing: true,
-		};
-
-		queue.set(message.guild.id, queueContruct);
-
-		queueContruct.songs.push(song);
-
-		try {
-			var connection = await voiceChannel.join();
-			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0]);
-		} catch (err) {
-			console.log(err);
-			queue.delete(message.guild.id);
-			return message.channel.send(err);
-		}
-	} else {
-		serverQueue.songs.push(song);
-		console.log(serverQueue.songs);
-		return message.channel.send(`${song.title} has been added to the queue!`);
-	}
-
+        if(timer > 90) return message.reply("Please set a timer between 1 and 90 Seconds")
+        const clock = setInterval(() => {
+            timer--;
+            console.log(timer);
+            if (timer == 60) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
+            if (timer == 45) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
+            if (timer == 15) return message.channel.send({embed :{title: timer +  " Seconds Left"}}) 
+            if (timer == 7) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
+            if (timer == 3) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
+            if(timer == 0)
+                {
+                    clearInterval(clock)
+                    message.channel.send({embed :{title: `TIME`}})
+                }     
+         }, 1000)   
+      }
+    })
+    */
+function random()
+{
+     let num =  (Math.floor(Math.random() *10 ) + 1)
+     return num
 }
-function play(guild, song) {
-	const serverQueue = queue.get(guild.id);
-
-	if (!song) {
-		serverQueue.voiceChannel.leave();
-		queue.delete(guild.id);
-		return;
+let number = random()
+client.on(`message`, message => 
+{
+ if(message.content.toLowerCase() === "!random")
+    {
+        
+        message.channel.send(`Your random number is  ` + number + "!")
     }
-    const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
-		.on('end', () => {
-			console.log('Music ended!');
-			serverQueue.songs.shift();
-			play(guild, serverQueue.songs[0]);
-		})
-		.on('error', error => {
-			console.error(error);
-		});
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+    if(message.content.toLowerCase() === '!resetnum')
+    {
+        number = 0;
+    }
+    if(message.content.toLowerCase() === `!showstored`)
+    {
+        message.channel.send(number)
+    }
+    else if (message.content.toLowerCase().startsWith('!increase'))
+    {
+        let args = message.content.split(" ").slice(1)
+        if(number == 0) 
+        {
+            let pars = parseInt(number) + parseInt(args.join(" "))
+            message.channel.send(`Final results : ${pars}`)
+        }else 
+        {
+        message.channel.send(`Added ${args.join(' ')} to ${number}`)
+        let pars = parseInt(number) + parseInt(args.join(" "))
+        message.reply(`Final result : ${pars}`)
+        }
 
-}
-function skip(message, serverQueue) {
-    if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-    if (!serverQueue) return message.channel.send('There is no song that I could skip!');
-    serverQueue.connection.dispatcher.end();
-}
-
-function stop(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	serverQueue.songs = [];
-	serverQueue.connection.dispatcher.end();
-}
-
-//end
+        
+    }
+})
 // user info | server info
 client.on('message', m =>{
     if(m.content.toLowerCase().startsWith(`!av`))
@@ -169,6 +139,7 @@ if(m.content.toLowerCase() === "!h")
     .setDescription(`\n1.!part Adds you up to the queue for the event\n2.!quit Removes you from the event list\n3.!list shows u the current preforming/next/participants`)
     .addField(`Avatar command`, `!av with or without mentioning someone`)
     .addField(`Coin flip command`, `!flip`)
+    .addField('Other Commands','\n1.!userinfo `Shows you your info or the mentioned user`"s information\n2.!serverinfo Shows the server information.')
     .addField(`Moderation commands`, `\n1.!ban @user **reason**\n2.!kick @user\n3.!mute @user\n4.!unmute @user\n5.!unban @user\n6.!purge <amount>`)
     .setThumbnail(`${m.guild.iconURL}`)
     .setTimestamp()
@@ -176,17 +147,15 @@ if(m.content.toLowerCase() === "!h")
     m.channel.send(embed)
 }
 })
-// end
 // when the bot starts
 client.on('ready', () => {
     client.user.setActivity(`ZoonCord | !h for help`, { type: 'WATCHING' })
-    const server = client.guilds.get('603917982392909824')
-    const role = server.roles.get(`606232368780410920`)
-    const filtered = server.members.filter(member => !member.roles.has(`606232368780410920`)) 
+    const server = client.guilds.get('662677595275526154')
+    const role = server.roles.get(`662741676934037508`)
+    const filtered = server.members.filter(member => !member.roles.has(`662741676934037508`)) 
     if(server.members.filter(bot => bot.roles.has(`606232926992203826`))) return
     filtered.forEach(r => r.addRole(role))      
     })
-// end
 // part command
 var que = [];
 var partstart = []
@@ -199,8 +168,7 @@ if(partstart)
         if(!message.member.roles.has('606232881119100977')) return message.reply("You are not a beatboxer to part in the beatbox tournament!")
         if(que.indexOf(message.author.username) > -1) return message.reply('You are already in queue!')
         else
-        {
-            
+        {      
             que.push(message.author.username)
             message.reply("You have been added to the queue!")
         }
@@ -328,15 +296,17 @@ client.on('message', message =>
 })
 //end of part command
 // timer command
+let timer = ``
+const clock = setInterval(() => {
+    timer--;
+}, 1000);
 client.on("message", message => {
-    if(message.content.toLowerCase() == "!timer 90")
+    if(message.content.toLowerCase() == "!tr 90")
     {   
      if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
-
         message.reply("Timer set for 90 Seconds..")
-        let timer = 90;
-        const clock = setInterval(() => {
-            timer--;
+        timer = 90;
+        clock = setInterval(() => {
             console.log(timer);
             if (timer == 60) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
             if (timer == 45) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
@@ -350,14 +320,13 @@ client.on("message", message => {
                 }     
          }, 1000)   
       }
-      let timer = 60;
-      if(message.content.toLowerCase() == "!timer 60")
+      if(message.content.toLowerCase() == "!tr 90")
       {   
+
        if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
-  
+       timer = 60;
           message.reply("Timer set for 60 Seconds..")
           const clock = setInterval(() => {
-            timer--;
             console.log(timer);
             if (timer == 45) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
             if (timer == 25) return message.channel.send({embed :{title: timer +  " Seconds Left"}}) 
@@ -371,14 +340,13 @@ client.on("message", message => {
           }, 1000) 
       
         }
-        if(message.content.toLowerCase() == "!timer 30")
+        if(message.content.toLowerCase() == "!tr 30")
         {   
          if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
     
             message.reply("Timer set for 30 Seconds..")
-            let timer = 30;
+            timer = 30;
             const clock = setInterval(() => {
-                timer--;
                 console.log(timer);
                 if (timer == 25) return message.channel.send({embed :{title: timer +  " Seconds Left"}}) 
                 if (timer == 15) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
@@ -391,12 +359,17 @@ client.on("message", message => {
               }, 1000) 
         
           }
-    
+       if(message.content.toLowerCase() === '!tr reset')
+       {
+           clearInterval(clock)
+           timer = 0
+       }
 });
 //end of timer cmd
 //Moderation commands
 client.on('message', message =>
 {
+    if(message.author.bot) return
     if (message.content.toLowerCase().startsWith("!purge")) {
         const args = message.content.slice(1).split(" ").slice(1);
         if (!message.member.hasPermission(["MANAGE_MESSAGES", "ADMINISTRATOR"]))
@@ -439,7 +412,7 @@ client.on('message', message =>
         const member = message.guild.member(user);
         let role = message.guild.roles.find(r => r.name === "MUTED");
         if (!user)
-            return message.reply("You have to mention someone Which is muted!");
+            return message.reply("You have to mention someone Who is muted!");
         if (user) {
             member.removeRole(role);
             message.reply(`Successfully unmuted ${user.tag}`);
@@ -452,17 +425,35 @@ client.on('message', message =>
             return message.reply("Sorry you have no permission!");
         if (!user)
             return message.reply('You have to mention a member first!').then(msg => msg.delete(5000));
-        if (user) {
+        if (user || !reason) {
             user.send(`You got kicked from ZoonCord for : ${reason}`).catch(err => message.reply(`Error : ${err.message}`));
             const embed = new Discord.RichEmbed()
                 .setColor(`#E73C18`)
                 .setTitle(`Kicked : ${user.tag} Succesfully from ZoonCord`)
                 .addField(`Kicked at`, `${message.createdAt}`)
-                .addField(`Reason`, reason)
+                .addField(`Reason`, 'Was kicked for no reason sadly!')
                 .addBlankField()
                 .setTimestamp();
-            let channel = message.guild.channels.find(r => r.name === `log`);
-            channel.reply(embed).then(() => message.guild.member(user).kick());
+                let channel = message.guild.channels.find(r => r.name === `log`)
+                channel.send(embed)
+                channel.reply(embed).then(() => message.guild.member(user).kick())
+                .catch(err => message.reply(`ERROR : ${err}`))
+            if (user || reason) {
+                    user.send(`You got kicked from ZoonCord for : ${reason}`).catch(err => message.reply(`Error : ${err.message}`));
+                    const embed = new Discord.RichEmbed()
+                        .setColor(`#E73C18`)
+                        .setTitle(`Kicked : ${user.tag} Succesfully from ZoonCord`)
+                        .addField(`Kicked at`, `${message.createdAt}`)
+                        .addField(`Reason`, reason)
+                        .addBlankField()
+                        .setTimestamp();
+                        let channel = message.guild.channels.find(r => r.name === `log`);
+                        channel.send(embed)
+
+                        channel.reply(embed).then(() => message.guild.member(user).kick())
+                        .catch(err => message.reply(`ERROR : ${err}`))
+
+            }
         }
     }
     if (message.content.toLowerCase().startsWith('!ban')) {
@@ -500,7 +491,7 @@ client.on('message', message =>
             description: `Unbanned \`${bannedmember} From ZoonCord`
         }
         }).then(msg => msg.delete(10000));
-        message.member.send(`Here is the invite for ZoonCord : https://discord.gg/pS96N5z`);
+        message.member.send(`Here is the invite for ZoonCord : https://discord.gg/Zctv4cf`);
     }
 })
 // end of moderation commands
@@ -522,7 +513,7 @@ client.on('guildMemberAdd', member => {
 
     let channel = member.guild.systemChannel
      channel.send(embed)
-    let role = member.guild.roles.find(r=> r.name === '[ ZoonGang ]')
+    let role = member.guild.roles.find(r=> r.name === '| Zoon Gang |')
 
     member.addRole(role)
 })
