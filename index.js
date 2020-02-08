@@ -34,44 +34,6 @@ client.login(process.env.TOKEN)
       }
     })
     */
-function random()
-{
-     let num =  (Math.floor(Math.random() *10 ) + 1)
-     return num
-}
-let number = random()
-client.on(`message`, message => 
-{
- if(message.content.toLowerCase() === "!random")
-    {
-        
-        message.channel.send(`Your random number is  ` + number + "!")
-    }
-    if(message.content.toLowerCase() === '!resetnum')
-    {
-        number = 0;
-    }
-    if(message.content.toLowerCase() === `!showstored`)
-    {
-        message.channel.send(number)
-    }
-    else if (message.content.toLowerCase().startsWith('!increase'))
-    {
-        let args = message.content.split(" ").slice(1)
-        if(number == 0) 
-        {
-            let pars = parseInt(number) + parseInt(args.join(" "))
-            message.channel.send(`Final results : ${pars}`)
-        }else 
-        {
-        message.channel.send(`Added ${args.join(' ')} to ${number}`)
-        let pars = parseInt(number) + parseInt(args.join(" "))
-        message.reply(`Final result : ${pars}`)
-        }
-
-        
-    }
-})
 // user info | server info
 client.on('message', m =>{
     if(m.content.toLowerCase().startsWith(`!av`))
@@ -153,7 +115,6 @@ client.on('ready', () => {
     const server = client.guilds.get('662677595275526154')
     const role = server.roles.get(`662741676934037508`)
     const filtered = server.members.filter(member => !member.roles.has(`662741676934037508`)) 
-    if(server.members.filter(bot => bot.roles.has(`606232926992203826`))) return
     filtered.forEach(r => r.addRole(role))      
     })
 // part command
@@ -165,7 +126,6 @@ if(partstart)
 {
     if(message.content.toLowerCase() === "!part")
     {
-        if(!message.member.roles.has('606232881119100977')) return message.reply("You are not a beatboxer to part in the beatbox tournament!")
         if(que.indexOf(message.author.username) > -1) return message.reply('You are already in queue!')
         else
         {      
@@ -184,7 +144,7 @@ if(partstart)
         }
     }
 
-    if(message.content.toLowerCase() == '!' + 'ec')
+    if(message.content.toLowerCase() == '!ec')
     {
         if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
         partstart = false
@@ -194,7 +154,7 @@ if(partstart)
 if(!partstart || partstart)
 {
 
-    if(message.content.toLowerCase() == '!' + 'eo')
+    if(message.content.toLowerCase() == '!eo')
     {
         if(!message.member.roles.find(r => r.name === "[ Host ]")) return message.reply("You have no permission to Close queue!")
 
@@ -495,13 +455,8 @@ client.on('message', message =>
     }
 })
 // end of moderation commands
-console.log('ready')
-
 // Welcome message / auto role ;d
 client.on('guildMemberAdd', member => {
-
-  
-
     const embed = new Discord.RichEmbed()
     .setColor('RANDOM')
     .setTitle(`Welcome to ${member.guild.name} ` + member.displayName)
@@ -510,11 +465,10 @@ client.on('guildMemberAdd', member => {
     .setTimestamp()
     .addBlankField()
     .addField("Support Zoon :d", "Instagram : @zoonattackbbx. Twitter : @AttackZoon. Youtube : ZoonAttack");
-
     let channel = member.guild.systemChannel
      channel.send(embed)
     let role = member.guild.roles.find(r=> r.name === '| Zoon Gang |')
-
     member.addRole(role)
 })
 // end of greeting cmd
+console.log('ready')
