@@ -262,24 +262,24 @@ const clock = setInterval(() => {
 }, 1000);
 client.on("message", message => {
     if(message.content.toLowerCase() == "!tr 90")
-    {   
-     if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
-        message.reply("Timer set for 90 Seconds..")
-        timer = 90;
-        clock = setInterval(() => {
+      {   
+
+       if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
+       timer = 90;
+          message.reply("Timer set for 90 Seconds..")
+          const clock = setInterval(() => {
             console.log(timer);
             if (timer == 60) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
-            if (timer == 45) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
-            if (timer == 25) return message.channel.send({embed :{title: timer +  " Seconds Left"}}) 
+            if (timer == 45) return message.channel.send({embed :{title: timer +  " Seconds Left"}}) 
+            if (timer == 25) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
             if (timer == 10) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
-            if (timer == 5) return message.channel.send({embed :{title: timer +  " Seconds Left"}})
             if(timer == 0)
                 {
                     clearInterval(clock)
                     message.channel.send({embed :{title: `TIME`}})
                 }     
-         }, 1000)   
-      }
+          }, 1000) 
+          }
       if(message.content.toLowerCase() == "!tr 60")
       {   
 
