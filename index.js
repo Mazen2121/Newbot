@@ -280,7 +280,7 @@ client.on("message", message => {
                 }     
          }, 1000)   
       }
-      if(message.content.toLowerCase() == "!tr 90")
+      if(message.content.toLowerCase() == "!tr 60")
       {   
 
        if(!message.member.roles.some(r => r.name === "[ Host ]")) return message.reply('You have no permission')
